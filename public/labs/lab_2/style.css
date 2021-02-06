@@ -20,7 +20,7 @@ body {
 /* || typography */
 
 h1, h2, h3 {
-  font-family: 'Cinzel Decorative', cursive;
+  font-family: 'Lobster Two', cursive;
   color: #2a2a2a;
 }
 
@@ -39,7 +39,7 @@ h1 {
 h2 {
   font-size: 5rem;
   text-align: center;
-  font-weight: 800;
+  font-weight: 300;
 }
 
 h3 {
@@ -60,7 +60,7 @@ p, li {
 }
 
 body > * {
-  background-color: red;
+  background-color: #6091C3;
   padding: 1%;
 }
 
