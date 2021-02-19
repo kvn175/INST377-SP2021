@@ -39,13 +39,13 @@ app.route('/api')
     // console.log('data from fetch', json);
     res.json(json);
   })
-  
+
   .post(async (req, res) => {
     console.log('POST request detected');
     console.log('Form data in req.body', req.body);
     console.log('Now send something back to your client');
     // res.json({data: dataToSendToFrontEnd});
-    res.json({message: "test successful"})
+    res.json({message: "Hello World"})
   });
 
 app.listen(port, async () => {
