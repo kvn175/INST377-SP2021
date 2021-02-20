@@ -1,87 +1,171 @@
-document.addEventListener('DOMContentLoaded' , () => {
-    const bird = document.querySelector('.bird')
-    const gameDisplay = document.querySelector('.game-container')
-    const ground = document.querySelector('.ground-moving')
-
-    let birdLeft = 220
-    let birdBottom = 100
-    let gravity = 3
+document.addEventListener('DOMContentLoaded', () => {
+    const grid = document.querySelector('.grid')    /* returns the 1st element from document that matches the selector */
+    const doodler = document.createElement('div')   /* creates the HTML element specified by tagName */
+    let doodlerLeftSpace = 50
+    let startPoint = 150
+    let doodlerBottomSpace = startPoint
     let isGameOver = false
-    let gap = 430
+    let platformCount = 5
+    let platforms = []
+    let upTimerId
+    let downTimerId
+    let isJumping = true
+    let isGoingLeft = false 
+    let isGoingRight = false
+    let leftTimerId
+    let rightTimerId
 
 
-    function startGame() {
-        birdBottom -= gravity
-        bird.style.bottom = birdBottom + 'px'
-        bird.style.left = birdLeft + 'px'
+
+    function createDoodler() {
+        grid.appendChild(doodler)
+        doodler.classList.add('doodler')
+        doodlerLeftSpace = platforms[0].left
+        doodler.style.left = doodlerLeftSpace + 'px'
+        doodler.style.bottom = doodlerBottomSpace + 'px'
     }
-    let gameTimerId = setInterval(startGame, 20)
 
-    function control(e) {
-        if (e.keyCode === 32) {
-            jump()
+    class Platform {
+        constructor(newPlatBottom) {
+            this.bottom = newPlatBottom
+            this.left = Math.random() * 315
+            this.visual = document.createElement('div')
+
+            const visual = this.visual
+            visual.classList.add('platform')
+            visual.style.left = this.left + 'px'
+            visual.style.bottom = this.bottom + "px"
+            grid.appendChild(visual)
+        }
+    }
+
+    function createPlatforms() {
+        for (let i = 0; i < platformCount; i++) {
+            let platGap = 600 / platformCount
+            let newPlatBottom = 100 + i * platGap
+            let newPlatform = new Platform(newPlatBottom)
+            platforms.push(newPlatform)
+            console.log(platforms)
+        }
+    }
+
+    function movePlatforms() {
+        if (doodlerBottomSpace > 200) {
+            platforms.forEach(platform => {
+                platform.bottom -= 4
+                let visual = platform.visual
+                visual.style.bottom = platform.bottom + 'px'
+
+                if (platform.bottom < 10) {
+                    let firstPlatform = platforms[0].visual
+                    firstPlatform.classList.remove('platform')
+                    platforms.shift() //used to remove first item from of an array
+                    console.log(platforms)
+                    let newPlatform = new Platform(600)
+
+                }
+            })
         }
     }
 
     function jump() {
-        if (birdBottom < 500) birdBottom += 50
-        bird.style.bottom = birdBottom + 'px'
-        console.log(birdBottom)
-    }
-    document.addEventListener('keyup', control)
-
-
-    function generateObstacle() {
-        let obstacleLeft = 500
-        let randomHeight = Math.random() * 60
-        let obstacleBottom = randomHeight
-        const obstacle = document.createElement('div')
-        const topObstacle = document.createElement('div')
-        if (!isGameOver) {
-            obstacle.classList.add('obstacle')
-            topObstacle.classList.add('topObstacle')
-        }
-        gameDisplay.appendChild(obstacle)
-        gameDisplay.appendChild(topObstacle)
-        obstacle.style.left = obstacleLeft + 'px'
-        topObstacle.style.left = obstacleLeft + 'px'
-        obstacle.style.bottom = obstacleBottom + 'px'
-        topObstacle.style.bottom = obstacleBottom + gap + 'px'
-
-        function moveObstacle() {
-            obstacleLeft -=2
-            obstacle.style.left = obstacleLeft + 'px'
-            topObstacle.style.left = obstacleLeft + 'px'
-
-            if (obstacleLeft === -60) {
-                clearInterval(timerId)
-                gameDisplay.removeChild(obstacle)
-                gameDisplay.removeChild(topObstacle)
+        clearInterval(downTimerId)
+        isJumping = true
+        upTimerId = setInterval(function () {
+            doodlerBottomSpace += 20
+            doodler.style.bottom = doodlerBottomSpace + 'px'
+            if (doodlerBottomSpace > startPoint + 200) {
+                fall()
             }
-            if (
-                obstacleLeft > 200 && obstacleLeft < 280 && birdLeft === 220 &&
-                (birdBottom < obstacleBottom + 153 || birdBottom > obstacleBottom + gap -200)||
-                birdBottom === 0 
-                ) {
+        }, 30)
+    }
+
+    function fall() {
+        clearInterval(upTimerId)
+        isJumping = false
+        downTimerId = setInterval(function () {
+            doodlerBottomSpace -= 5
+            doodler.style.bottom = doodlerBottomSpace + 'px'
+            if (doodlerBottomSpace <= 0) {
                 gameOver()
-                clearInterval(timerId)
             }
-        }
-        let timerId = setInterval(moveObstacle, 20) 
-        if (!isGameOver) setTimeout(generateObstacle, 3000)
+            platforms.forEach(platform => {
+                if (
+                    (doodlerBottomSpace >= platform.bottom) &&
+                    (doodlerBottomSpace <= platform.bottom + 15) &&
+                    ((doodlerLeftSpace + 60) >= platform.left) &&
+                    (doodlerLeftSpace <= (platform.left + 85)) &&
+                    !isJumping
+                ) {
+                    console.log('landed')
+                    startPoint = doodlerBottomSpace
+                    jump()
+                }
+            })
 
+        }, 30)
     }
-    generateObstacle()
-
 
     function gameOver() {
-        clearInterval(gameTimerId)
         console.log('game over')
         isGameOver = true
-        document.removeEventListener('keyup', control)
-        ground.classList.add('ground')
-        ground.classList.remove('ground-moving')
+        clearInterval(upTimerId)
+        clearInterval(downTimerId)
     }
 
+    function control(e) {
+        if (e.key === "ArrowLeft") {
+            moveLeft()
+        } else if (e.key === "ArrowRight") {
+            moveRight()
+        } else if (e.key === "ArrowUp") {
+            moveStraight()
+        }
+    }
 
+    function moveLeft() {
+        if (isGoingLeft) {
+            clearInterval(rightTimerId)
+            isGoingRight = false
+        }
+        isGoingLeft = true
+        leftTimerId = setInterval(function () {
+            if (doodlerLeftSpace >= 0) {
+                doodlerLeftSpace -= 5
+                doodler.style.left = doodlerLeftSpace + 'px'
+            } else moveRight() 
+        }, 30)
+    }
+
+    function moveRight() {
+        if (isGoingLeft) {
+            clearInterval(leftTimerId)
+            isGoingLeft = false
+        }
+        isGoingRight = true
+        rightTimerId = setInterval(function () {
+            if (doodlerLeftSpace <= 340) {
+                doodlerLeftSpace += 5
+                doodler.style.left = doodlerLeftSpace + "px"
+            } else moveLeft()
+        }, 30)
+    }
+
+    function moveStraight() {
+        isGoingRight = false
+        isGoingLeft = false
+        clearInverval(rightTimerId)
+        clearInverval(leftTimerId)
+    }
+
+    function start() {
+        if (!isGameOver) {
+            createPlatforms()
+            createDoodler()
+            setInterval(movePlatforms, 30)
+            jump()
+            document.addEventListener('keyup', control)
+        }
+    }
+    start()
 })
