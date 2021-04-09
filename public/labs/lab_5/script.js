@@ -1,6 +1,6 @@
 function mapInit() {
 
-    const mymap = L.map('mapid').setView([51.505, -0.09], 13);
+    const mymap = L.map('mapid').setView([38.9897, -76.9378], 13);
 
     L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
@@ -33,7 +33,7 @@ async function dataHandler(mapFromLeaflet) {
         filtered.forEach((item) => {
             const longLat = item.geocoded_column_1.coordinates;
             console.log('markerLongLat', longLat[0], longLat[1]);
-            const marker = L.marker([longLat[1], longLat[0]]).addTo(mapFromMapFunction);
+            const marker = L.marker([longLat[1], longLat[0]]).addTo(mapFromLeaflet);
         
             const appendItem = document.createElement('li');
             appendItem.classList.add('block');
