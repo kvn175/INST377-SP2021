@@ -1,1 +1,20 @@
 #mapid { height: 180px; }
+
+.title {
+    background-color:  #808080;
+    color: white;
+    min-width: 960px;
+    text-align: center;
+}
+
+.list-header {
+    font-weight: 600;
+    font-size: 1.25rem;
+}
+
+.list-item{
+    border-radius: 4px;
+    color: rgba(25, 25, 25, 90);
+    background: #00d1b2;
+    padding: 5px;
+}
