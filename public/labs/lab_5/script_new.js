@@ -14,9 +14,9 @@ function mapInit() {
     return mymap;
 }
 
-async function dataHandler(mapFromLeaflet) {
+async function dataHandler(mapObjectFromFunction) {
     //assignment 1 code here
-    //target mapFromLeaflet to attach markers here
+    //target mapObjectFromFunction to attach markers here
     const form = document.querySelector("#search-form");
     const search = document.querySelector("#search");
     const targetList = document.querySelector(".target-list");

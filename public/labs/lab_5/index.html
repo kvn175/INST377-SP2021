@@ -16,19 +16,20 @@
 
 <body>
     <h1 class="title">Kevin Johansen</h1>
-    <!-- <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Dining Hall Name</th>
-                <th>Dining Hall Address</th>
-            </tr>
-        </thead>
-        <tbody class="ttable"></tbody>
-    </table> -->
-    
+
     <div class="columns">
-    <div class="columns"><div id="mapid"></div></div>
+        <div class="column">
+            <form action="" id="search-form">
+                <label for="search-form"></label>
+                <input type="text" id="search-form" name="search" placeholder="Search by Zip code.">
+                <button type="submit">Submit</button>
+                <ul class="target-list">
+                </ul>
+            </form>
+
+        </div>
+        <div class="column"><div id="mapid"></div></div>
+    </div>
     <script type = "text/javascript" src="script.js"></script>
 </body>
 </html>
